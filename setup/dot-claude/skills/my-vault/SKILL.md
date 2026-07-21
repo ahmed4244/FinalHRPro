@@ -7,8 +7,8 @@ description: The vault tool. Use when the user says "save this",
 ---
 Pick the verb by what the user asked. Writes go through the counter (the `vault`
 command) — the doctor checks the form; a clean form is accepted first time.
-You NEVER edit a vault file by hand and you NEVER complete work — the door
-(`vault-write-guard`) enforces both.
+You NEVER edit a vault file by hand, you NEVER complete work, and you NEVER
+approve or commit — the door (`vault-write-guard`) enforces all three.
 
 CAPTURE (write) · "save this / capture this..."
 1. Call: vault capture "<title>" --type <learning|reference> --zone <inbox/|knowledge/>
@@ -52,7 +52,7 @@ RECALL (read) · "what do I know about..."
 
 THE DOOR (why the rules hold)
 `~/.claude/hooks/vault-write-guard.sh` runs before every tool call and refuses:
-git commit/push (the human signs), direct Write/Edit into the vault (use the
-verbs), deletes in the vault, `vault done`/`complete`, and any hand-edit of a
-task file. When it refuses, read the message and follow it — don't work around
-it.
+git commit/push and `vault accept`/`reject`/`commit` (approving is the human's
+signature), direct Write/Edit into the vault (use the verbs), deletes in the
+vault, `vault done`/`complete`, and any hand-edit of a task file to move it.
+When it refuses, read the message and follow it — don't work around it.
