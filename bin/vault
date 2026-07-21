@@ -1,0 +1,248 @@
+#!/usr/bin/env bash
+# vault: the doorway. Writes come in here, checked at the door (Day 9),
+# and the doctor reads every form before it is filed (Day 11).
+# Project work follows the plan model: a PLAN states an outcome, a SCOPE
+# slices a plan, a TASK attaches to a scope or a plan. An ADR records a
+# decision, off to the side of that spine.
+# Reads (recent, search, tree) run free — looking was never the risk.
+cd ~/vault || { echo "vault: no vault at ~/vault" >&2; exit 2; }
+verb="$1"; shift
+
+refuse() { echo "vault: $1" >&2; exit 2; }
+slugof() { echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9][^a-z0-9]*/-/g; s/^-//; s/-*$//'; }
+meta()   { grep -m1 "^$2:" "$1" | sed 's/^[^:]*: *//; s/^"//; s/"$//'; }
+
+case "$verb" in
+
+  capture)  # vault capture "a thing worth keeping" [--type learning|reference] [--zone inbox/|knowledge/]
+    title="$1"; shift
+    type="learning"; zone="inbox/"
+    while [ $# -gt 0 ]; do case "$1" in
+      --type) type="$2"; shift 2 ;;
+      --zone) zone="$2"; shift 2 ;;
+      *) shift ;;
+    esac; done
+
+    # --- the doctor: check the form before you file it ---
+    # 1 · required field: a note needs a title
+    [ -n "${title// /}" ] || refuse "a note needs a non-empty title. Add a title and try again."
+    # 2 · valid type (repair: lowercase a near-miss, never invent)
+    type=$(printf '%s' "$type" | tr '[:upper:]' '[:lower:]')
+    case "$type" in learning|reference) ;; *) refuse "'$type' is not a known type. Use: learning, reference." ;; esac
+    # 3 · allowed zone (repair: an empty zone defaults to inbox/)
+    [ -n "$zone" ] || zone="inbox/"
+    case "$zone" in inbox/|knowledge/) ;; *) refuse "'$zone' is not an allowed zone. Use: inbox/ or knowledge/." ;; esac
+    # 4 · non-sensitive content only — the rule that never moves
+    case "$(printf '%s' "$title" | tr '[:upper:]' '[:lower:]')" in
+      *secret*|*classified*|*password*|*confidential*)
+        refuse "non-sensitive content only. Rephrase the note without the sensitive part." ;;
+    esac
+    # 5 · no duplicates
+    slug="$(slugof "$title")"
+    file="${zone}${slug}.md"
+    [ -e "$file" ] && refuse "that note already exists: $file"
+
+    # --- passed the doctor -> record a well-formed proposal ---
+    printf -- '---\ntitle: "%s"\ntype: %s\ncreated: %s\ntags: []\nstatus: proposed\n---\n\n%s\n' \
+      "$title" "$type" "$(date +%F)" "$title" > "$file"
+    # knowledge/ notes join the front door; inbox/ waits for routing (Day 14)
+    [ "$zone" = "knowledge/" ] && echo "- [[$slug]]" >> knowledge/index.md
+    echo "captured: $file (type: $type, status: proposed)" ;;
+
+  adr)  # vault adr <project> "the decision"
+    proj="$1"; title="$2"
+    [ -d "projects/$proj" ] || refuse "no such project: $proj"
+    [ -n "$title" ] || refuse "adr needs the decision in words"
+    last=$(ls projects/"$proj"/adr-*.md 2>/dev/null | sed 's/.*adr-\([0-9]*\)-.*/\1/' | sort -n | tail -1)
+    next=$(printf '%03d' $((10#${last:-0}+1)))
+    slug="$(slugof "$title")"
+    file="projects/$proj/adr-$next-$slug.md"
+    printf -- '---\ntitle: "%s"\ntype: adr\ncreated: %s\ntags: [adr]\nstatus: proposed\n---\n\n# ADR-%s: %s\n\n## Decision\n%s\n' \
+      "$title" "$(date +%F)" "$next" "$title" "$title" > "$file"
+    echo "- [[adr-$next-$slug]]" >> "projects/$proj/index.md"
+    echo "recorded: $file (status: proposed), linked from the index." ;;
+
+  plan)  # vault plan <project> "the outcome" [--goal "one line, if the title isn't the goal"]
+    proj="$1"; title="$2"; shift 2 2>/dev/null
+    goal="$title"
+    while [ $# -gt 0 ]; do case "$1" in
+      --goal) goal="$2"; shift 2 ;;
+      *) shift ;;
+    esac; done
+    [ -d "projects/$proj" ] || refuse "no such project: $proj"
+    [ -n "$title" ] || refuse "a plan needs its outcome in words. Try: vault plan $proj \"what done looks like\""
+    slug="plan-$(slugof "$title")"
+    file="projects/$proj/$slug.md"
+    [ -e "$file" ] && refuse "that plan already exists: $file"
+    { echo '---'
+      echo "title: \"$title\""
+      echo 'type: plan'
+      echo "created: $(date +%F)"
+      echo 'tags: [plan]'
+      echo 'status: proposed'
+      echo "goal: \"$goal\""
+      echo '---'
+      echo
+      echo "# $title"
+      echo
+      echo "## Goal"
+      echo "$goal"
+    } > "$file"
+    echo "- [[$slug]]" >> "projects/$proj/index.md"
+    echo "plan recorded: $file (status: proposed, goal set), linked from the index." ;;
+
+  scope)  # vault scope <project> <plan-slug> "the slice"
+    proj="$1"; plan="$2"; title="$3"
+    [ -d "projects/$proj" ] || refuse "no such project: $proj"
+    case "$plan" in plan-*) ;; *) refuse "a scope attaches to a plan (plan-…), got: $plan" ;; esac
+    [ -e "projects/$proj/$plan.md" ] || refuse "no such plan: projects/$proj/$plan.md"
+    [ -n "$title" ] || refuse "a scope needs a name — the slice of the plan it delivers"
+    slug="scope-$(slugof "$title")"
+    file="projects/$proj/$slug.md"
+    [ -e "$file" ] && refuse "that scope already exists: $file"
+    { echo '---'
+      echo "title: \"$title\""
+      echo 'type: scope'
+      echo "created: $(date +%F)"
+      echo 'tags: [scope]'
+      echo 'status: proposed'
+      echo "parent: \"[[$plan]]\""
+      echo '---'
+      echo
+      echo "# $title"
+    } > "$file"
+    echo "- [[$slug]]" >> "projects/$proj/index.md"
+    echo "scoped: $file (status: proposed) -> part of $plan, linked from the index." ;;
+
+  task)  # vault task <project> "the work item" [--scope <scope-slug> | --plan <plan-slug>]
+    proj="$1"; title="$2"; shift 2 2>/dev/null
+    parent=""
+    while [ $# -gt 0 ]; do case "$1" in
+      --scope|--plan) parent="$2"; shift 2 ;;
+      *) shift ;;
+    esac; done
+    [ -d "projects/$proj" ] || refuse "no such project: $proj"
+    [ -n "$title" ] || refuse "task needs a name"
+    if [ -n "$parent" ]; then
+      case "$parent" in scope-*|plan-*) ;; *) refuse "a task attaches to a scope (scope-…) or a plan (plan-…), got: $parent" ;; esac
+      [ -e "projects/$proj/$parent.md" ] || refuse "no such parent: projects/$proj/$parent.md"
+    fi
+    slug="wi-$(slugof "$title")"
+    file="projects/$proj/$slug.md"
+    [ -e "$file" ] && refuse "that work item already exists: $file"
+    { echo '---'
+      echo "title: \"$title\""
+      echo 'type: work-item'
+      echo "created: $(date +%F)"
+      echo 'tags: [work-item]'
+      echo 'status: planned'
+      [ -n "$parent" ] && echo "parent: \"[[$parent]]\""
+      echo '---'
+      echo
+      echo "# $title"
+    } > "$file"
+    echo "- [[$slug]]" >> "projects/$proj/index.md"
+    if [ -n "$parent" ]; then
+      echo "planned: $file (status: planned) -> part of $parent, linked from the index."
+    else
+      echo "planned: $file (status: planned), linked from the index."
+    fi ;;
+
+  done)  # vault done <project> <wi-slug>
+    proj="$1"; slug="$2"
+    case "$slug" in wi-*) ;; *) refuse "done only closes work items (wi-…): $slug" ;; esac
+    file="projects/$proj/$slug.md"
+    [ -e "$file" ] || refuse "no such work item: $file"
+    tmp=$(mktemp); sed 's/^status: .*/status: done/' "$file" > "$tmp" && mv "$tmp" "$file"
+    echo "done: $file" ;;
+
+  recent)  # vault recent [n] — the newest notes, by created date (read only)
+    n="${1:-10}"
+    grep -H '^created:' inbox/*.md knowledge/*.md projects/*/*.md 2>/dev/null \
+      | sed 's/:created: */\t/' | sort -t$'\t' -k2 -r | head -n "$n" \
+      | while IFS=$'\t' read -r f d; do
+          t=$(grep -m1 '^title:' "$f" | sed 's/^title: *//; s/^"//; s/"$//')
+          printf '%s  %-55s %s\n' "$d" "$f" "$t"
+        done ;;
+
+  search)  # vault search <words> — find notes by title or body (read only)
+    q="$*"
+    [ -n "$q" ] || refuse "search needs words. Try: vault search todo"
+    grep -ril -- "$q" inbox knowledge projects --include='*.md' 2>/dev/null \
+      | while read -r f; do
+          t=$(grep -m1 '^title:' "$f" | sed 's/^title: *//; s/^"//; s/"$//')
+          printf '%-55s %s\n' "$f" "$t"
+        done ;;
+
+  tree)  # vault tree <project> [plan-slug] — plan -> scopes -> tasks (read only)
+    proj="$1"; pick="$2"
+    [ -d "projects/$proj" ] || refuse "no such project: $proj"
+    found=0
+    for plan in projects/"$proj"/plan-*.md; do
+      [ -e "$plan" ] || continue
+      pslug=$(basename "$plan" .md)
+      [ -n "$pick" ] && [ "$pick" != "$pslug" ] && continue
+      found=1
+      echo "PLAN  $pslug  [$(meta "$plan" status)]"
+      echo "      goal: $(meta "$plan" goal)"
+      for sc in projects/"$proj"/scope-*.md; do
+        [ -e "$sc" ] || continue
+        grep -q "parent: \"\[\[$pslug\]\]\"" "$sc" || continue
+        sslug=$(basename "$sc" .md)
+        echo "  SCOPE  $sslug  [$(meta "$sc" status)]"
+        for wi in projects/"$proj"/wi-*.md; do
+          [ -e "$wi" ] || continue
+          grep -q "parent: \"\[\[$sslug\]\]\"" "$wi" || continue
+          echo "    task  $(basename "$wi" .md)  [$(meta "$wi" status)]"
+        done
+      done
+      # tasks attached straight to the plan
+      for wi in projects/"$proj"/wi-*.md; do
+        [ -e "$wi" ] || continue
+        grep -q "parent: \"\[\[$pslug\]\]\"" "$wi" || continue
+        echo "  task  $(basename "$wi" .md)  [$(meta "$wi" status)]"
+      done
+    done
+    [ "$found" -eq 1 ] || refuse "no plan found. Start one: vault plan $proj \"the outcome\"" ;;
+
+  accept)  # vault accept <slug> — the Human Gate: route a proposal into knowledge/
+    slug="$1"
+    [ -n "$slug" ] || refuse "accept needs a proposal slug. See: vault recent"
+    src="inbox/${slug}.md"
+    [ -f "$src" ] || refuse "no proposal named '$slug' in inbox/"
+    dest="knowledge/${slug}.md"
+    [ -e "$dest" ] && refuse "'$slug' is already in knowledge/"
+    tmp=$(mktemp); sed 's/^status: .*/status: accepted/' "$src" > "$tmp" && mv "$tmp" "$dest"
+    rm "$src"
+    echo "- [[$slug]]" >> knowledge/index.md
+    echo "accepted: $dest (routed from inbox/, status: accepted, linked from the index)" ;;
+
+  reject)  # vault reject <slug> — the Human Gate: log a "no"
+    slug="$1"
+    [ -n "$slug" ] || refuse "reject needs a proposal slug. See: vault recent"
+    src="inbox/${slug}.md"
+    [ -f "$src" ] || refuse "no proposal named '$slug' in inbox/"
+    tmp=$(mktemp); sed 's/^status: .*/status: rejected/' "$src" > "$tmp" && mv "$tmp" "$src"
+    echo "rejected: $src (status: rejected — kept as a record of your decision)" ;;
+
+  help|--help|"")
+    echo "vault: the doorway to your vault. One command, both of you use it."
+    echo "  writes (checked at the door, read by the doctor):"
+    echo "    vault capture \"words\" [--type learning|reference] [--zone inbox/|knowledge/]"
+    echo "    vault adr     <project> \"the decision\""
+    echo "    vault plan    <project> \"the outcome\" [--goal \"one line\"]"
+    echo "    vault scope   <project> <plan-slug> \"the slice\""
+    echo "    vault task    <project> \"the work item\" [--scope <scope-slug> | --plan <plan-slug>]"
+    echo "    vault done    <project> <wi-slug>"
+    echo "    vault accept  <slug>          the Human Gate: route a proposal into knowledge/"
+    echo "    vault reject  <slug>          the Human Gate: log a no"
+    echo "  reads (run free):"
+    echo "    vault recent [n]              the newest notes"
+    echo "    vault search <words>          find notes by title or body"
+    echo "    vault tree <project> [plan]   plan -> scopes -> tasks, with statuses"
+    echo "  the work model: a plan states a goal, a scope slices a plan,"
+    echo "  a task attaches to a scope or a plan. An adr records a decision."
+    echo "  example: vault scope task-tracker plan-version-3-sync \"one true copy\"" ;;
+
+  *) refuse "unknown verb: $verb. Run: vault help" ;;
+esac

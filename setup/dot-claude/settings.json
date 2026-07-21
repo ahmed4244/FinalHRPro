@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit",
+        "hooks": [{ "type": "command", "command": "~/.claude/hooks/vault-write-guard.sh" }]
+      }
+    ]
+  }
+}

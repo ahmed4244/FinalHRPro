@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<!-- todo.html — the task tracker, version 2 (Days 8 + 12).
+     One file, localStorage, no server: adr-004.
+     v1: add · complete · soft-delete (adr-003) · survive refresh · open count.
+     v2: edit a task's words · filter open-only (adr-005). -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Task Tracker</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 3rem auto; padding: 0 1rem; color: #222; }
+  h1 { font-size: 1.4rem; }
+  form { display: flex; gap: .5rem; margin: 1rem 0; }
+  input[type=text] { flex: 1; padding: .5rem; font-size: 1rem; }
+  button { padding: .45rem .8rem; font-size: .95rem; cursor: pointer; }
+  ul { list-style: none; padding: 0; }
+  li { display: flex; align-items: center; gap: .6rem; padding: .45rem 0; border-bottom: 1px solid #eee; }
+  li.done .words { text-decoration: line-through; color: #999; }
+  .words { flex: 1; }
+  .count { color: #555; margin: .6rem 0; }
+  .filter { font-size: .9rem; }
+</style>
+</head>
+<body>
+<h1>Task Tracker</h1>
+
+<form id="add-form">
+  <input type="text" id="new-task" placeholder="A new task…" autocomplete="off">
+  <button type="submit">Add</button>
+</form>
+
+<p class="count"><span id="open-count">0</span> open ·
+  <label class="filter"><input type="checkbox" id="open-only"> show open only</label></p>
+
+<ul id="list"></ul>
+
+<script>
+  // The one true copy lives in localStorage under this key.
+  const KEY = 'task-tracker-v2';
+  let tasks = JSON.parse(localStorage.getItem(KEY) || '[]');
+  let openOnly = false;
+
+  const save = () => localStorage.setItem(KEY, JSON.stringify(tasks));
+
+  function render() {
+    const list = document.getElementById('list');
+    list.innerHTML = '';
+    // soft-deleted tasks show in neither view (adr-003)
+    const visible = tasks.filter(t => !t.deleted && (!openOnly || !t.done));
+    for (const t of visible) {
+      const li = document.createElement('li');
+      if (t.done) li.className = 'done';
+
+      const tick = document.createElement('input');
+      tick.type = 'checkbox'; tick.checked = t.done;
+      tick.onchange = () => { t.done = tick.checked; save(); render(); };
+
+      const words = document.createElement('span');
+      words.className = 'words'; words.textContent = t.words;
+
+      // v2: edit in place — an edit emptied to nothing keeps the old words
+      const edit = document.createElement('button');
+      edit.textContent = 'Edit';
+      edit.onclick = () => {
+        const next = prompt('Edit the task:', t.words);
+        if (next !== null && next.trim() !== '') { t.words = next.trim(); save(); render(); }
+      };
+
+      const del = document.createElement('button');
+      del.textContent = 'Delete';
+      del.onclick = () => { t.deleted = true; save(); render(); };
+
+      li.append(tick, words, edit, del);
+      list.appendChild(li);
+    }
+    // open count ignores completed AND deleted, and never changes with the filter
+    document.getElementById('open-count').textContent =
+      tasks.filter(t => !t.deleted && !t.done).length;
+  }
+
+  document.getElementById('add-form').onsubmit = (e) => {
+    e.preventDefault();
+    const box = document.getElementById('new-task');
+    const words = box.value.trim();
+    if (!words) return;                       // an empty task does nothing
+    tasks.unshift({ words, done: false, deleted: false });  // newest first (adr-002)
+    box.value = ''; save(); render();
+  };
+
+  document.getElementById('open-only').onchange = (e) => {
+    openOnly = e.target.checked; render();
+  };
+
+  render();
+</script>
+</body>
+</html>
