@@ -225,6 +225,15 @@ case "$verb" in
     tmp=$(mktemp); sed 's/^status: .*/status: rejected/' "$src" > "$tmp" && mv "$tmp" "$src"
     echo "rejected: $src (status: rejected — kept as a record of your decision)" ;;
 
+  commit)  # vault commit <project> <slug> — the Human Gate: greenlight an ADR or plan
+    proj="$1"; slug="$2"
+    [ -n "$proj" ] && [ -n "$slug" ] || refuse "commit needs: vault commit <project> <slug>"
+    file="projects/${proj}/${slug}.md"
+    [ -f "$file" ] || refuse "no such item: $file"
+    case "$slug" in adr-*|plan-*) ;; *) refuse "only ADRs and plans are committed here (got: $slug)" ;; esac
+    tmp=$(mktemp); sed 's/^status: .*/status: accepted/' "$file" > "$tmp" && mv "$tmp" "$file"
+    echo "committed: $file (status: accepted — greenlit for implementation)" ;;
+
   help|--help|"")
     echo "vault: the doorway to your vault. One command, both of you use it."
     echo "  writes (checked at the door, read by the doctor):"

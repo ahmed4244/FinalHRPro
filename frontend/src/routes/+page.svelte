@@ -1,4 +1,5 @@
 <script>
+  import { enhance } from '$app/forms';
   let { data } = $props();
 </script>
 
@@ -16,22 +17,32 @@
     <div class="empty">Nothing matched. Try another word — or <a href="/">clear the search</a>.</div>
   {:else}
     <div class="cards">
-      {#each data.results as n}
-        <a class="card" href="/note/{n.slug}">
-          <div class="title">{n.title}</div>
-          <div class="ex">{n.excerpt}</div>
-          <div class="meta">
-            {#each n.tags as t}<span class="chip">{t}</span>{/each}
-            <span class="date">{n.created}</span>
-          </div>
+      {#each data.results as r}
+        <a class="card" href={r.href}>
+          <div class="title">{r.title}</div>
+          <div class="ex">{r.excerpt}</div>
+          <div class="meta"><span class="chip">{r.kind || r.zone}</span><span class="date">{r.created}</span></div>
         </a>
       {/each}
     </div>
   {/if}
 {:else}
+  {#if data.captures.length}
+    <h2>Captures to file</h2>
+    {#each data.captures as c (c.slug)}
+      <div class="capture-row">
+        <span>{c.title}</span>
+        <form method="POST" action="?/file" use:enhance>
+          <input type="hidden" name="slug" value={c.slug} />
+          <button class="btn sm" type="submit">File to knowledge</button>
+        </form>
+      </div>
+    {/each}
+  {/if}
+
   <h2>Recent</h2>
   {#if data.recent.length === 0}
-    <div class="empty">Your vault is empty. Capture a note from the terminal to see it here.</div>
+    <div class="empty">No notes yet. Capture one from the terminal to see it here.</div>
   {:else}
     <div class="cards">
       {#each data.recent as n}

@@ -12,6 +12,9 @@
       <a href="/knowledge" class:active={$page.url.pathname.startsWith('/knowledge')}>
         Knowledge <span class="badge">{data.counts.knowledge}</span>
       </a>
+      <a href="/projects" class:active={$page.url.pathname.startsWith('/projects')}>
+        Projects <span class="badge">{data.counts.projects}</span>
+      </a>
       <a href="/inbox" class:active={$page.url.pathname.startsWith('/inbox')}>
         Inbox <span class="badge accent">{data.counts.inbox}</span>
       </a>

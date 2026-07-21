@@ -1,28 +1,24 @@
-import { proposed, approve, reject } from '$lib/server/vault.js';
+import { pendingDecisions, commit, rejectDecision } from '$lib/server/vault.js';
 import { fail } from '@sveltejs/kit';
 
-// The Human-Gate queue: every proposal waiting for your yes or no.
-export const load = () => ({ proposals: proposed() });
+// The Human-Gate queue: proposed ADRs and plans waiting to be committed.
+export const load = () => ({ pending: pendingDecisions() });
 
-// The two decisions. These are the only writes the face makes — and they go
-// through this one governed door, never straight to the files from the browser.
+// Commit greenlights a decision/plan for implementation; reject logs a no.
+// These are the only writes the face makes — through this one governed door.
 export const actions = {
-  approve: async ({ request }) => {
-    const slug = String((await request.formData()).get('slug') || '');
-    try {
-      approve(slug);
-      return { done: 'approved', slug };
-    } catch (e) {
-      return fail(400, { error: e.message });
-    }
+  commit: async ({ request }) => {
+    const f = await request.formData();
+    const project = String(f.get('project') || '');
+    const slug = String(f.get('slug') || '');
+    try { commit(project, slug); return { done: 'committed', slug }; }
+    catch (e) { return fail(400, { error: e.message }); }
   },
   reject: async ({ request }) => {
-    const slug = String((await request.formData()).get('slug') || '');
-    try {
-      reject(slug);
-      return { done: 'rejected', slug };
-    } catch (e) {
-      return fail(400, { error: e.message });
-    }
+    const f = await request.formData();
+    const project = String(f.get('project') || '');
+    const slug = String(f.get('slug') || '');
+    try { rejectDecision(project, slug); return { done: 'rejected', slug }; }
+    catch (e) { return fail(400, { error: e.message }); }
   }
 };
