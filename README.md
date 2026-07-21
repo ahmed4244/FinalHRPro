@@ -1,87 +1,107 @@
-# The Week-4 Starter Vault — Day 13
+# Your Command Center
 
-The shared vault every student adopts on the morning of Day 13, so the whole
-room starts Week 4 from the same known-good ground: a governed vault that has
-already lived through Weeks 2 and 3. This repo root **is** the vault — the
-installer places it at `~/vault`.
+A personal command center: a **markdown vault** (your knowledge + your projects)
+plus a **SvelteKit face** that gives it a read surface, a Human-Gate inbox, and a
+**governed kanban board** for every plan. You drive it from the terminal and the
+face; the AI drafts and does the work; you hold the judgment.
 
-Coming from Week 3 with your own vault intact? You may keep yours. This repo
-levels the room: anyone whose vault broke, drifted, or stayed thin adopts it
-and stands exactly where everyone else stands.
+The repo root **is** the vault — the installer places it at `~/vault`, and the
+face lives in `frontend/`.
 
-## Install (Day 13, 09:00)
+## Install
 
 ```bash
-git clone https://github.com/jneaimi/command-center-starter-week4.git
-bash command-center-starter-week4/install.sh
+git clone https://github.com/jneaimi/command-center-starter-final.git
+bash command-center-starter-final/install.sh
 ```
 
-That's it. The installer archives your previous vault to `~/archive` (nothing
-is deleted — it is your proof of Weeks 1–3), places this one at `~/vault`,
-stages the `~/.claude` side, puts the `vault` command on your PATH, restores
-the todo app if yours is missing, and **verifies everything** — you should see
-`All checks passed`. Then open a **new** terminal:
+The installer places the vault at `~/vault` (archiving any previous one to
+`~/archive` — nothing is deleted), stages the `~/.claude` side (rules, settings,
+the guard hook, the `my-vault` skill), puts the `vault` command on your PATH, and
+**verifies everything**. Then, in two places:
 
 ```bash
+# drive it from the terminal
 cd ~/vault && claude
+
+# open its face (the app)
+cd ~/vault/frontend && npm install && npm run dev
 ```
 
-## What's inside — everything Weeks 2–3 built
+Windows: run the same steps inside WSL (Ubuntu).
+
+## Update (without reinstalling)
+
+`install.sh` copies files *out* of this repo into `~/vault` **and** into
+`~/.claude`. A plain `git pull` refreshes the vault and the `vault` command, but
+not the `~/.claude` side (the guard + skill). To pull everything up to date
+without reinstalling — and without touching your notes, projects, or inbox:
+
+```bash
+cd ~/vault && git pull && bash update.sh
+```
+
+`update.sh` re-stages the `~/.claude` files and re-checks the tools; it archives
+nothing and leaves your vault content exactly as it is. Restart your Claude Code
+session afterward so the refreshed guard + skill load.
+
+## What's inside
 
 ```
-CLAUDE.md                     the vault rules (now 8 — the doctor enforces them)
-bin/vault                     Day 9-11: the doorway — capture (doctor-checked),
-                              adr, plan, scope, task, done + the reads:
-                              recent, search, tree
-doctor.sh                     Day 7: the read-only check-up for the whole vault
-knowledge/                    15 interlinked notes + index — incl. the Week 2-3 learnings
-projects/task-tracker/        the full trail: adr-001…005, v1+v2 work items closed,
-                              and version 3 already planned the work-model way:
-                              plan-version-3-sync -> two scopes -> the open catch-all
-inbox/                        4 captures at status: proposed — waiting for Day 14
-templates/                    one per note type
-setup/dot-claude/             the ~/.claude side (installer stages it):
+CLAUDE.md                     the vault rules the doctor enforces
+bin/vault                     the doorway — one command, both of you use it:
+                                draft   capture · adr · plan · scope · task
+                                move    claim (→active) · submit (→review)
+                                gate    accept · reject · commit  (human only)
+                                read    projects · recent · search · tree
+doctor.sh                     the read-only check-up for the whole vault
+knowledge/                    interlinked notes + index (the method, the tools)
+projects/hello-world/         a guided tour — each ADR/plan/scope/task explains
+                              the step; build the tiniest thing and drive the
+                              whole loop once
+projects/profile-site/        a realistic build, ready to test on the board:
+                              decisions + a draft plan + scopes + backlog tasks
+inbox/                        quick captures waiting to be filed
+frontend/                     the SvelteKit face (see frontend/README.md)
+setup/dot-claude/             the ~/.claude side the installer stages:
                                 CLAUDE.md        global rules
-                                settings.json    the guard registered on Bash|Write|Edit
-                                hooks/           vault-write-guard.sh — all three laws
-                                skills/my-vault  the skill, rewired to the counter
-setup/todo-app/todo.html      the task tracker, v2 (restore copy)
+                                settings.json    the guard on Bash|Write|Edit
+                                hooks/           vault-write-guard.sh — its 4 laws
+                                skills/my-vault  the skill, wired to the doorway
 ```
 
-## Validate the adoption
+## How the work moves — and who moves it
 
-In a Claude session started inside `~/vault`, say:
+The lifecycle of a task: **backlog → planning → active → review → completed.**
+Each step has an owner, and the rules are enforced three ways — the engine
+refuses illegal moves, the face reflects the gates, and the guard + `vault`
+command stop the AI from going around them.
 
+| Move | Who | Where |
+|---|---|---|
+| Approve a decision (ADR → accepted) | human | inbox / the ADR's page |
+| Commit a plan (→ accepted) — only once its decision is accepted | human | the board |
+| Commit a scope → its tasks move to planning | human | the board |
+| Claim a task (planning → active) | **AI** | `vault claim <project> <task>` |
+| Submit a task (active → review) | **AI** | `vault submit <project> <task>` |
+| Approve (review → completed) / send back (→ planning) | human | the board |
+
+The AI can **never** complete work or approve anything — `vault done`,
+`vault accept`, `vault reject`, and `vault commit` are blocked at the door. It
+drafts and does; you sign.
+
+## Keep it always on
+
+To keep the face running in the background and surviving a reboot, run the built
+server under **PM2** — see the bonus lesson. In short:
+
+```bash
+cd ~/vault/frontend && npm run build
+VAULT_DIR=$HOME/vault PORT=5180 pm2 start build/index.js --name command-center
+pm2 save && pm2 startup   # run the line it prints
 ```
-Run the doctor on my vault, then try: vault capture "" — and tell me what
-happened in both cases. Read only otherwise, change nothing.
-```
 
-Expected: **clean bill of health**, and the empty capture **refused with a
-clear reason** (exit 2). Two more, felt by hand:
+## The rule that never moves
 
-```
-write a file at knowledge/side-door-test.md with just a title line in it
-```
-
-→ blocked: *notes go through the doorway.* The wall holds.
-
-```
-save this to my vault: week four starts from known ground
-```
-
-→ the skill hands it to `vault capture`, the doctor passes it, it lands in
-`inbox/` at `status: proposed`, and the AI stops. You review, you sign.
-
-```
-vault tree task-tracker
-```
-
-→ the work model on one screen: the version-3 plan, its two scopes, the open
-catch-all under it — plan → scope → task, each with its status.
-
-## The rules that never move
-
-Non-sensitive content only. Reads run free; writes wait for your review. The
-write path you own from memory: **sentence → skill → counter → doctor → vault
-(`proposed`) → your signature.** This week, that path gets a face.
+Non-sensitive content only. Reads run free; writes wait for your review. The AI
+drafts, does the work, and stops at every gate. You hold the judgment.
