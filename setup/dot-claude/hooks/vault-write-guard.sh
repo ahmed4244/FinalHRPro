@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # vault-write-guard: the AI drafts, you sign. And the vault has one door.
 # Laws:
-#   1 · committing is the human's signature (no git commit/push)
+#   1 · signing is the human's — no git commit/push, and no `vault accept`,
+#       `vault reject`, or `vault commit` (approving is the human's signature)
 #   2 · notes go through the doorway (no direct Write/Edit into the vault)
 #   3 · deleting in the vault needs your hands
 #   4 · the AI moves its own cards only through `vault claim` / `vault submit`,
@@ -22,9 +23,11 @@ case "$tool" in
   Bash)
     cmd=$(printf '%s' "$input" | python3 -c 'import sys,json; print(json.load(sys.stdin).get("tool_input",{}).get("command",""))' 2>/dev/null)
     case "$cmd" in
-      # law 1: committing is the human's signature
+      # law 1: signing is the human's — code AND governance
       *"git commit"*|*"git push"*)
         block "committing is the human's signature. Show the draft and stop." ;;
+      *"vault accept"*|*"vault reject"*|*"vault commit"*)
+        block "approving is the human's signature, not the terminal's. You draft (capture / adr / plan / scope / task); a human accepts, rejects, or commits — on the board, or their own terminal. Stop here." ;;
       # law 3: deleting in the vault needs your hands
       *"rm "*vault*)
         block "deleting in the vault needs your hands." ;;

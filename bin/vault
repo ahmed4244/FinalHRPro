@@ -135,7 +135,7 @@ case "$verb" in
       echo 'type: work-item'
       echo "created: $(date +%F)"
       echo 'tags: [work-item]'
-      echo 'status: planned'
+      echo 'status: backlog'
       [ -n "$parent" ] && echo "parent: \"[[$parent]]\""
       echo '---'
       echo
@@ -143,9 +143,9 @@ case "$verb" in
     } > "$file"
     echo "- [[$slug]]" >> "projects/$proj/index.md"
     if [ -n "$parent" ]; then
-      echo "planned: $file (status: planned) -> part of $parent, linked from the index."
+      echo "drafted: $file (status: backlog) -> part of $parent. A human commits its scope to release it into planning."
     else
-      echo "planned: $file (status: planned), linked from the index."
+      echo "drafted: $file (status: backlog), linked from the index."
     fi ;;
 
   claim)  # vault claim <project> <task-slug> — the AI picks up work (planning -> active)
@@ -170,6 +170,16 @@ case "$verb" in
 
   done|complete)  # blocked — the Hook: completing work is the human's call, not the terminal's
     refuse "completing work is the Human Gate's call, not the terminal's. Move it to review (vault submit <project> <task>) and let the human approve it on the board." ;;
+
+  projects)  # vault projects — the projects you have (read only)
+    found=0
+    for d in projects/*/; do
+      [ -d "$d" ] || continue
+      name=$(basename "$d")
+      title=$(meta "${d}index.md" title 2>/dev/null)
+      printf '%-22s %s\n' "$name" "$title"; found=1
+    done
+    [ "$found" -eq 1 ] || echo "no projects yet." ;;
 
   recent)  # vault recent [n] — the newest notes, by created date (read only)
     n="${1:-10}"
@@ -205,14 +215,14 @@ case "$verb" in
         grep -q "parent: \"\[\[$pslug\]\]\"" "$sc" || continue
         sslug=$(basename "$sc" .md)
         echo "  SCOPE  $sslug  [$(meta "$sc" status)]"
-        for wi in projects/"$proj"/wi-*.md; do
+        for wi in projects/"$proj"/wi-*.md projects/"$proj"/task-*.md; do
           [ -e "$wi" ] || continue
           grep -q "parent: \"\[\[$sslug\]\]\"" "$wi" || continue
           echo "    task  $(basename "$wi" .md)  [$(meta "$wi" status)]"
         done
       done
       # tasks attached straight to the plan
-      for wi in projects/"$proj"/wi-*.md; do
+      for wi in projects/"$proj"/wi-*.md projects/"$proj"/task-*.md; do
         [ -e "$wi" ] || continue
         grep -q "parent: \"\[\[$pslug\]\]\"" "$wi" || continue
         echo "  task  $(basename "$wi" .md)  [$(meta "$wi" status)]"
@@ -257,14 +267,16 @@ case "$verb" in
     echo "    vault plan    <project> \"the outcome\" [--goal \"one line\"]"
     echo "    vault scope   <project> <plan-slug> \"the slice\""
     echo "    vault task    <project> \"the work item\" [--scope <scope-slug> | --plan <plan-slug>]"
-    echo "  the work flow (the AI moves its own cards; it can NEVER complete one):"
-    echo "    vault claim   <project> <task-slug>   pick up a planned task  (planning -> active)"
-    echo "    vault submit  <project> <task-slug>   hand it to the gate     (active  -> review)"
-    echo "    vault accept  <slug>          the Human Gate: route a proposal into knowledge/"
-    echo "    vault reject  <slug>          the Human Gate: log a no"
-    echo "  the Human Gate finishes work on the board (review -> completed). Not here:"
-    echo "    vault done / complete         BLOCKED — approve it on the board instead"
+    echo "  the work flow — the AI moves ONLY its own cards:"
+    echo "    vault claim   <project> <task-slug>   pick up a committed task (planning -> active)"
+    echo "    vault submit  <project> <task-slug>   hand it to the gate      (active  -> review)"
+    echo "  the Human Gate — the human's signature (the AI is blocked from these):"
+    echo "    vault accept  <slug>             route an inbox proposal into knowledge/"
+    echo "    vault reject  <slug>             log a no on an inbox proposal"
+    echo "    vault commit  <project> <slug>   greenlight an ADR or plan"
+    echo "    vault done / complete            BLOCKED — the Human Gate completes on the board"
     echo "  reads (run free):"
+    echo "    vault projects                the projects you have"
     echo "    vault recent [n]              the newest notes"
     echo "    vault search <words>          find notes by title or body"
     echo "    vault tree <project> [plan]   plan -> scopes -> tasks, with statuses"

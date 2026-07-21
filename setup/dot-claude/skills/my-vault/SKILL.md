@@ -26,8 +26,10 @@ BREAK DOWN A PROJECT (write) · "plan this", "break this down..."
 1. Plan first: vault plan <project> "<the outcome>" --goal "<one line>"
 2. Slice it:  vault scope <project> <plan-slug> "<the slice>"  (one per slice)
 3. First steps: vault task <project> "<the work>" --scope <scope-slug>
-4. Everything lands status: proposed / planned. Show the receipts and
-   `vault tree <project>`, then STOP. The user reviews and commits.
+4. Plans, scopes, and ADRs land status: proposed; tasks land backlog. Nothing
+   is live yet. Show the receipts and `vault tree <project>`, then STOP — the
+   human accepts the decision, commits the plan, then commits the scope (which
+   releases its tasks into planning, ready for you to claim).
 
 MOVE THE WORK (write) · "pick up / work on this task", "start on..."
 The lifecycle: backlog → planning → active → review → completed. A human commits
@@ -43,8 +45,9 @@ planning. Only a task in planning can be picked up.
    at the door, and so is editing a task file by hand to change its status.
 
 RECALL (read) · "what do I know about..."
-1. Read knowledge/index.md and follow its links, into projects too.
-   (vault recent, vault search, and vault tree are quick entry points.)
+1. Read knowledge/index.md and follow its links, into projects too. Quick entry
+   points: vault projects (what exists), vault tree <project> (the work + its
+   statuses), vault recent, vault search.
 2. Answer and cite the notes you used. Read only. No writes.
 
 THE DOOR (why the rules hold)
