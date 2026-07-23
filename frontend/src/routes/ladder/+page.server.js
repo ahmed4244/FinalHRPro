@@ -1,20 +1,24 @@
-import ladder from '$lib/ladder.json';
 import { project, trackRequirement } from '$lib/server/vault.js';
 import { fail } from '@sveltejs/kit';
 
-const PROJECT = 'profession-ladder';
-// show the checklist in a readable order regardless of file mtime
+// The paths registry: one JSON per major under src/lib/paths/. Drop a new one in
+// (the /addpath skill does) and it shows up here as a new tab — no code change.
+const files = import.meta.glob('../../lib/paths/*.json', { eager: true });
+const REGISTRY = Object.values(files)
+  .map((m) => m.default)
+  .sort((a, b) => (a.order ?? 99) - (b.order ?? 99) || a.cluster.localeCompare(b.cluster));
+const KNOWN_PROJECTS = new Set(REGISTRY.map((p) => p.project));
+
 const CAT_ORDER = { certification: 0, course: 1, project: 2, leadership: 3 };
 const categoryOf = (tags) => (tags || []).find((t) => t !== 'work-item') || 'task';
 
-// Build the career profile: each rung's metadata (from the one JSON, ADR-004)
-// merged with the LIVE status of its work items (the vault, ADR-005). Tick a
-// requirement done anywhere — board, terminal, or the ladder — and it shows here.
-function profile() {
-  const proj = project(PROJECT);
+// Merge a path's rung metadata (JSON) with the LIVE status of its work items
+// (the vault project it points at). Tick a requirement → it shows done here.
+function buildPath(def) {
+  const proj = project(def.project);
   const items = proj ? proj.artifacts.filter((a) => a.kind === 'task') : [];
 
-  const rungs = ladder.rungs.map((r) => {
+  const rungs = def.rungs.map((r) => {
     const requirements = items
       .filter((w) => w.parent === r.scopeSlug)
       .map((w) => ({
@@ -31,22 +35,22 @@ function profile() {
 
   const total = rungs.reduce((n, r) => n + r.total, 0);
   const done = rungs.reduce((n, r) => n + r.doneCount, 0);
-  // the rung you're working toward = the first not-yet-complete one
   const nextRung = rungs.find((r) => !r.complete) || null;
-
-  return { cluster: ladder.cluster, tagline: ladder.tagline, start: ladder.start, rungs, progress: { done, total }, nextRung };
+  return { slug: def.slug, project: def.project, cluster: def.cluster, tagline: def.tagline, start: def.start, rungs, progress: { done, total }, nextRung };
 }
 
-export const load = () => ({ profile: profile() });
+export const load = () => ({ paths: REGISTRY.map(buildPath) });
 
-// The one governed write this page makes: tick a requirement done, or untick it.
+// The one governed write: tick a requirement done / undone, on whichever path.
 export const actions = {
   toggle: async ({ request }) => {
     const f = await request.formData();
+    const projectName = String(f.get('project') || '');
     const slug = String(f.get('slug') || '');
     const done = String(f.get('done')) === 'true';
+    if (!KNOWN_PROJECTS.has(projectName)) return fail(400, { error: 'unknown path' });
     try {
-      trackRequirement(PROJECT, slug, done);
+      trackRequirement(projectName, slug, done);
       return { ok: true, slug, done };
     } catch (e) {
       return fail(400, { error: e.message });

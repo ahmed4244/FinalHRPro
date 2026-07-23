@@ -1,4 +1,7 @@
 {
+  "slug": "software-engineer",
+  "project": "profession-ladder",
+  "order": 1,
   "cluster": "Software Engineer",
   "horizonYears": 10,
   "cadenceYears": 5,

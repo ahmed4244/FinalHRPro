@@ -1,0 +1,38 @@
+{
+  "slug": "cyber-security",
+  "project": "cyber-security-ladder",
+  "order": 2,
+  "cluster": "Cyber Security",
+  "horizonYears": 10,
+  "cadenceYears": 5,
+  "tagline": "From a bachelor's degree to Principal Security Engineer — two promotions, ten years.",
+  "start": {
+    "title": "Security Engineer",
+    "year": 0,
+    "note": "You are here — a bachelor's degree, ~0 years of experience. You monitor, triage alerts, and implement the controls you're handed."
+  },
+  "rungs": [
+    {
+      "n": 1,
+      "title": "Senior Security Engineer",
+      "year": 5,
+      "theme": "Ownership",
+      "scope": "Own a security domain end-to-end — detection & response, or the security of a whole product — instead of working tickets.",
+      "experience": "~5 years. You run incidents, threat-model real systems, and set the security bar for your area.",
+      "noteSlug": "senior-security-engineer",
+      "scopeSlug": "scope-promotion-1-senior-security-engineer",
+      "evaluated": "Evidence you already operate at Senior scope: incidents you led, risks you drove down (measurably), and peers who trust your judgment on security calls."
+    },
+    {
+      "n": 2,
+      "title": "Staff / Principal Security Engineer",
+      "year": 10,
+      "theme": "Multiplying",
+      "scope": "Set security direction several teams build against — architecture, standards, and a program that raises the whole org's security.",
+      "experience": "~9–12+ years. A promotion gated on org-wide security impact and architecture leadership, not tenure.",
+      "noteSlug": "staff-security-engineer",
+      "scopeSlug": "scope-promotion-2-staff-security-engineer",
+      "evaluated": "Sustained org-wide impact: a security architecture teams build on, a program that measurably lowered risk, and Staff+ sponsors who attest to it."
+    }
+  ]
+}
