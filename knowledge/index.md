@@ -19,6 +19,11 @@ The front door. Everything worth finding is linked from here.
 - [[senior-security-engineer]] — the first promotion, in full
 - [[staff-security-engineer]] — the second promotion, in full
 
+## Aerospace Engineering path
+- [[aerospace-engineering-career-ladder]] — the map: Aerospace Engineer → Senior (+5) → Principal (+10)
+- [[senior-aerospace-engineer]] — the first promotion, in full
+- [[lead-aerospace-engineer]] — the second promotion, in full
+
 ## Shared concepts
 - [[the-scope-ladder-task-to-org]] — the one axis every rung moves along
 - [[promotion-is-operating-at-the-next-level]] — how the decision is really made
@@ -26,3 +31,4 @@ The front door. Everything worth finding is linked from here.
 ## Projects
 - [[../projects/profession-ladder/index|Profession Ladder (Software Engineer)]] — the ten-year plan
 - [[../projects/cyber-security-ladder/index|Cyber Security Ladder]] — the ten-year plan
+- [[../projects/aerospace-engineering-ladder/index|Aerospace Engineering Ladder]] — the ten-year plan

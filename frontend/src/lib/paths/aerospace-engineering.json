@@ -1,0 +1,38 @@
+{
+  "slug": "aerospace-engineering",
+  "project": "aerospace-engineering-ladder",
+  "order": 3,
+  "cluster": "Aerospace Engineering",
+  "horizonYears": 10,
+  "cadenceYears": 5,
+  "tagline": "From a bachelor's degree to Principal Aerospace Engineer — two promotions, ten years.",
+  "start": {
+    "title": "Aerospace Engineer",
+    "year": 0,
+    "note": "You are here — a bachelor's degree, ~0 years of experience. You run assigned analyses and design components under a senior engineer's direction."
+  },
+  "rungs": [
+    {
+      "n": 1,
+      "title": "Senior Aerospace Engineer",
+      "year": 5,
+      "theme": "Ownership",
+      "scope": "Own an aircraft or spacecraft subsystem end-to-end — design, analysis, test, and qualification — instead of assigned tasks.",
+      "experience": "~5–8 years, typically with a PE license. You own analyses and sign off on your components.",
+      "noteSlug": "senior-aerospace-engineer",
+      "scopeSlug": "scope-promotion-1-senior-aerospace-engineer",
+      "evaluated": "Evidence you own components end-to-end: designs you took through the review gates, analyses you sign off, a PE license, and peers who trust your engineering judgment."
+    },
+    {
+      "n": 2,
+      "title": "Lead / Principal Aerospace Engineer",
+      "year": 10,
+      "theme": "Multiplying",
+      "scope": "Set technical direction across a program — the system architecture and integration several teams build against — on the chief-engineer track.",
+      "experience": "~10–15+ years. A promotion gated on system-level ownership and program delivery, not tenure.",
+      "noteSlug": "lead-aerospace-engineer",
+      "scopeSlug": "scope-promotion-2-lead-aerospace-engineer",
+      "evaluated": "Sustained program-level impact: a system architecture teams build to, programs delivered through PDR/CDR/qualification, and technical authority recognised across the org."
+    }
+  ]
+}
