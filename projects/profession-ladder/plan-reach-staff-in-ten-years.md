@@ -3,7 +3,7 @@ title: "Reach Staff Engineer in ten years"
 type: plan
 created: 2026-07-23
 tags: [plan]
-status: proposed
+status: accepted
 goal: "Reach Staff/Lead Software Engineer within ten years, via Senior at year five"
 governed_by: "[[adr-002-model-the-ladder-on-the-big-tech-ic-track]]"
 ---

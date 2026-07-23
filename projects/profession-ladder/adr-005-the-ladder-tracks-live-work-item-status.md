@@ -3,7 +3,7 @@ title: "The ladder tracks live work-item status"
 type: adr
 created: 2026-07-23
 tags: [adr]
-status: proposed
+status: accepted
 ---
 
 # ADR-005: The ladder tracks live work-item status
