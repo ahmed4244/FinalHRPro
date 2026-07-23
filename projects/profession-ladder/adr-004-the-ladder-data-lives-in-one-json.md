@@ -22,9 +22,8 @@ notes; the **JSON is the render-ready mirror** of it.
 
 ## Why
 One JSON keeps the UI a pure view over data — any team member can update a rung by
-editing one file, and the render code never changes. It respects the
-[[../../knowledge/sveltekit-server-boundary|server boundary]] (static import, no
-secrets) and it makes ADR-002's promise real: swap the rubric and you edit JSON,
+editing one file, and the render code never changes. It respects the SvelteKit
+server boundary (a static import, no secrets) and it makes ADR-002's promise real: swap the rubric and you edit JSON,
 not components. It is the same "data in one place, the view just reads it" move as
 the rest of this command center.
 
