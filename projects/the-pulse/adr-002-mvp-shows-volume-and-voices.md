@@ -3,7 +3,7 @@ title: "MVP shows volume and voices"
 type: adr
 created: 2026-07-16
 tags: [adr]
-status: proposed
+status: accepted
 ---
 
 # ADR-002: MVP shows volume and voices

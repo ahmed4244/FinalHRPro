@@ -15,26 +15,9 @@
       "year": 5,
       "theme": "Ownership",
       "scope": "Own a feature or service end-to-end — the jump from finishing tasks to owning a system.",
-      "experience": "~5 years (Google L5 / Meta E5 ≈ 5–9 yrs). The industry's “terminal” level.",
+      "experience": "~5 years (Google L5 / Meta E5 ≈ 5–9 yrs). The industry's terminal level.",
       "noteSlug": "senior-software-engineer",
       "scopeSlug": "scope-promotion-1-senior-engineer",
-      "certifications": [
-        "AWS Certified Solutions Architect – Associate (SAA-C03)",
-        "AWS Developer – Associate  /  Azure Developer (AZ-204)",
-        "Certified Kubernetes Administrator (CKA) — if your team runs containers"
-      ],
-      "courses": [
-        "Grokking the System Design Interview (DesignGurus)",
-        "Designing Data-Intensive Applications — Martin Kleppmann",
-        "AWS SAA course (A Cloud Guru / Udemy / Coursera)",
-        "The Pragmatic Programmer  ·  Software Engineering at Google (free)"
-      ],
-      "projects": [
-        "Own a service or component end-to-end — design, ship, operate (on-call)",
-        "Lead a team-scoped project with several parts to launch",
-        "Write an RFC / design doc the team adopts",
-        "Mentor a junior engineer through a shippable feature"
-      ],
       "evaluated": "A promo packet showing you already do Senior-scope work: quantified impact, feedback from Senior+ peers, and a manager who will sponsor the case."
     },
     {
@@ -46,23 +29,6 @@
       "experience": "~9–12+ years (Google L6 / Meta E6). A promotion gated on multi-team impact, not tenure.",
       "noteSlug": "staff-software-engineer",
       "scopeSlug": "scope-promotion-2-staff-engineer",
-      "certifications": [
-        "AWS Certified Solutions Architect – Professional (SAP-C02)",
-        "Google Cloud Professional Cloud Architect (GCP equivalent)",
-        "iSAQB CPSA-Advanced  /  TOGAF — for the architecture track"
-      ],
-      "courses": [
-        "Staff Engineer — Will Larson  (the role & its archetypes)",
-        "The Staff Engineer's Path — Tanya Reilly",
-        "Fundamentals of Software Architecture  ·  Google SRE (free)",
-        "Grokking the Advanced System Design Interview"
-      ],
-      "projects": [
-        "Design a platform / shared service used by multiple teams",
-        "Lead a cross-team migration or re-architecture",
-        "Own a multi-quarter technical strategy for a domain",
-        "Grow senior engineers — sponsor others up the ladder"
-      ],
       "evaluated": "A packet showing sustained multi-team impact (not one project): design docs, RFCs, postmortems, and heavily-weighted Staff+ sponsor endorsements, calibrated above your team."
     }
   ]

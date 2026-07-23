@@ -3,7 +3,7 @@ title: "Use apidirect.io as the data source"
 type: adr
 created: 2026-07-16
 tags: [adr]
-status: proposed
+status: accepted
 ---
 
 # ADR-005: Use apidirect.io as the data source

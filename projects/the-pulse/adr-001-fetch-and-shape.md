@@ -3,7 +3,7 @@ title: How The Pulse fetches and shapes results
 type: decision
 created: 2026-07-16
 tags: [decision, the-pulse]
-status: proposed
+status: accepted
 ---
 
 # ADR-001 — How The Pulse fetches and shapes results

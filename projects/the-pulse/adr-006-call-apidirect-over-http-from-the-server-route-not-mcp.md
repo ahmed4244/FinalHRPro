@@ -3,7 +3,7 @@ title: "Call apidirect over HTTP from the server route, not MCP"
 type: adr
 created: 2026-07-16
 tags: [adr]
-status: proposed
+status: accepted
 ---
 
 # ADR-006: Call apidirect over HTTP from the server route, not MCP

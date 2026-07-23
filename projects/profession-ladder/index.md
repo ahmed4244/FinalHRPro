@@ -16,8 +16,9 @@ degree as a Software Engineer; the app maps the road to **Senior** (year 5) and
 
 The **trail** — the decisions, the plan, the work items — lives here. The **map** in
 prose lives in [[../../knowledge/software-engineer-career-ladder|the career-ladder
-note]]. The **face** renders it at the `/ladder` route from
-[[adr-004-the-ladder-data-lives-in-one-json|one JSON]].
+note]]. The **face** renders it at the `/ladder` route as a **career profile that
+tracks your progress**: each work item below is a promotion requirement, and
+ticking it done there marks it done here ([[adr-005-the-ladder-tracks-live-work-item-status]]).
 
 Built by the five-member team on the shared repo (this vault is the deliverable).
 
@@ -26,6 +27,7 @@ Built by the five-member team on the shared repo (this vault is the deliverable)
 - [[adr-002-model-the-ladder-on-the-big-tech-ic-track]] — which rubric the rungs use
 - [[adr-003-a-promotion-every-five-years]] — the cadence: promotions at year 5 and 10
 - [[adr-004-the-ladder-data-lives-in-one-json]] — where the app reads the ladder from
+- [[adr-005-the-ladder-tracks-live-work-item-status]] — the checklist auto-tracks done work items
 
 ## Plans
 - [[plan-reach-staff-in-ten-years]] — the goal and its two slices

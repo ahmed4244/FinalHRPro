@@ -3,7 +3,7 @@ title: "A promotion every five years"
 type: adr
 created: 2026-07-23
 tags: [adr]
-status: proposed
+status: accepted
 ---
 
 # ADR-003: A promotion every five years

@@ -134,7 +134,8 @@ function artFrom(file, project) {
     created: fm.created || '',
     goal: fm.goal || '',
     parent: cleanLink(fm.parent),
-    governed_by: cleanLink(fm.governed_by)
+    governed_by: cleanLink(fm.governed_by),
+    tags: (fm.tags || '').replace(/[[\]]/g, '').split(',').map((t) => t.trim()).filter(Boolean)
   };
 }
 
@@ -346,6 +347,20 @@ export function gateReject(name, taskSlug, reason) {
   appendFileSync(file, `\n\n## Sent back — ${day}\n> ${(reason || 'no reason given').trim()}\n`);
   forget();
   return { task: taskSlug, status: 'planned' };
+}
+
+// THE CAREER TRACKER (Day-16 add) — the human ticks a requirement (a work item)
+// done, or unticks it, straight from the ladder / career profile. This is a human
+// move: the face is the human's side of the gate, so marking a real-world
+// requirement complete is your call to make. Untick returns it to backlog.
+export function trackRequirement(name, slug, done) {
+  const file = artFile(name, slug);
+  if (!existsSync(file)) throw new Error(`no such requirement: ${name}/${slug}`);
+  const a = getArtifact(name, slug);
+  if (a && a.kind !== 'task') throw new Error('only work items can be tracked');
+  setStatus(file, done ? 'done' : 'backlog');
+  forget();
+  return { slug, status: done ? 'done' : 'backlog' };
 }
 
 export const vaultDir = () => VAULT_DIR;

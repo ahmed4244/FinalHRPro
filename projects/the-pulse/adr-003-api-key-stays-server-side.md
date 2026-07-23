@@ -3,7 +3,7 @@ title: "API key stays server-side"
 type: adr
 created: 2026-07-16
 tags: [adr]
-status: proposed
+status: accepted
 ---
 
 # ADR-003: API key stays server-side

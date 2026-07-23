@@ -3,7 +3,7 @@ title: "Build Hello World as one small HTML file"
 type: decision
 created: 2026-07-20
 tags: [decision]
-status: proposed
+status: accepted
 ---
 
 # Build Hello World as one small HTML file

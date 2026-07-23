@@ -3,7 +3,7 @@ title: "Choose the Software Engineer cluster"
 type: adr
 created: 2026-07-23
 tags: [adr]
-status: proposed
+status: accepted
 ---
 
 # ADR-001: Choose the Software Engineer cluster

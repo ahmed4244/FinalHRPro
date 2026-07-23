@@ -3,7 +3,7 @@ title: "Ship a button that says hello"
 type: plan
 created: 2026-07-20
 tags: [plan]
-status: proposed
+status: accepted
 goal: "A page with one button; clicking it greets you."
 governed_by: "[[adr-001-one-html-file]]"
 ---

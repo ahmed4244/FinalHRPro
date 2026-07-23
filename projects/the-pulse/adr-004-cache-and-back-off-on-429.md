@@ -3,7 +3,7 @@ title: "Cache and back off on 429"
 type: adr
 created: 2026-07-16
 tags: [adr]
-status: proposed
+status: accepted
 ---
 
 # ADR-004: Cache and back off on 429

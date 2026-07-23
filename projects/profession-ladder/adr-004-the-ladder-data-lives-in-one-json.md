@@ -3,7 +3,7 @@ title: "The ladder data lives in one JSON"
 type: adr
 created: 2026-07-23
 tags: [adr]
-status: proposed
+status: accepted
 ---
 
 # ADR-004: The ladder data lives in one JSON
