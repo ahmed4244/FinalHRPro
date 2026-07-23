@@ -9,6 +9,7 @@
     <div class="brand">My Command Center</div>
     <nav>
       <a href="/" class:active={$page.url.pathname === '/'}>Home</a>
+      <a href="/ladder" class:active={$page.url.pathname.startsWith('/ladder')}>Ladder 🪜</a>
       <a href="/knowledge" class:active={$page.url.pathname.startsWith('/knowledge')}>
         Knowledge <span class="badge">{data.counts.knowledge}</span>
       </a>
