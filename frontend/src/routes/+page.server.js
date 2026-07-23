@@ -1,10 +1,6 @@
-import { recent, search } from '$lib/server/vault.js';
+import { redirect } from '@sveltejs/kit';
 
-export const load = ({ url }) => {
-  const q = url.searchParams.get('q')?.trim() || '';
-  return {
-    q,
-    recent: recent(6),
-    results: q ? search(q) : null
-  };
+// The app is the career tracker — open straight onto it.
+export const load = () => {
+  throw redirect(307, '/ladder');
 };
