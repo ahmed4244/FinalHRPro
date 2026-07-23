@@ -1,0 +1,38 @@
+{
+  "slug": "hospitality",
+  "project": "hospitality-ladder",
+  "order": 4,
+  "cluster": "Hospitality (F&B)",
+  "horizonYears": 10,
+  "cadenceYears": 5,
+  "tagline": "From the floor to Restaurant Manager — two promotions, ten years.",
+  "start": {
+    "title": "Server / Tea Boy",
+    "year": 0,
+    "note": "You are here — an entry food & beverage service role, ~0 years of experience. You take orders, serve guests, and keep the floor running."
+  },
+  "rungs": [
+    {
+      "n": 1,
+      "title": "Shift Supervisor / Head Server",
+      "year": 5,
+      "theme": "Ownership",
+      "scope": "Run a shift or section end-to-end — the floor, the team on it, and the service standard — instead of working your own tables.",
+      "experience": "~3–5 years on the floor, with food-safety and beverage certification. You own a shift and the guests' experience on it.",
+      "noteSlug": "hospitality-shift-supervisor",
+      "scopeSlug": "scope-promotion-1-shift-supervisor",
+      "evaluated": "Evidence you already run a shift: standards you hold, servers you trained, and a service metric you moved — plus a manager who trusts you with the floor."
+    },
+    {
+      "n": 2,
+      "title": "Food & Beverage / Restaurant Manager",
+      "year": 10,
+      "theme": "Multiplying",
+      "scope": "Run the whole outlet — its team, its standards, and its P&L — so every shift and every server performs, not just the one you're on.",
+      "experience": "~8–12+ years, with a hospitality-management qualification. A promotion gated on running a profitable, well-run venue, not tenure.",
+      "noteSlug": "food-and-beverage-manager",
+      "scopeSlug": "scope-promotion-2-food-and-beverage-manager",
+      "evaluated": "Sustained venue-level impact: a P&L you own, a team you built and retained, and service standards that hold across every shift — attested by ownership."
+    }
+  ]
+}

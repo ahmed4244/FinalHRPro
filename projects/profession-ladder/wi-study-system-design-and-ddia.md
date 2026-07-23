@@ -3,7 +3,7 @@ title: "Study system design + Designing Data-Intensive Applications"
 type: work-item
 created: 2026-07-23
 tags: [work-item, course]
-status: backlog
+status: done
 parent: "[[scope-promotion-1-senior-engineer]]"
 ---
 

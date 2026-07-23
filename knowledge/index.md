@@ -24,6 +24,11 @@ The front door. Everything worth finding is linked from here.
 - [[senior-aerospace-engineer]] — the first promotion, in full
 - [[lead-aerospace-engineer]] — the second promotion, in full
 
+## Hospitality (F&B) path
+- [[hospitality-career-ladder]] — the map: Server → Shift Supervisor (+5) → F&B Manager (+10)
+- [[hospitality-shift-supervisor]] — the first promotion, in full
+- [[food-and-beverage-manager]] — the second promotion, in full
+
 ## Shared concepts
 - [[the-scope-ladder-task-to-org]] — the one axis every rung moves along
 - [[promotion-is-operating-at-the-next-level]] — how the decision is really made
@@ -32,3 +37,4 @@ The front door. Everything worth finding is linked from here.
 - [[../projects/profession-ladder/index|Profession Ladder (Software Engineer)]] — the ten-year plan
 - [[../projects/cyber-security-ladder/index|Cyber Security Ladder]] — the ten-year plan
 - [[../projects/aerospace-engineering-ladder/index|Aerospace Engineering Ladder]] — the ten-year plan
+- [[../projects/hospitality-ladder/index|Hospitality Ladder]] — the ten-year plan
