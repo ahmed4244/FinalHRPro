@@ -33,3 +33,4 @@ The front door. Everything worth finding is linked from here.
 ## Projects
 - [[../projects/hello-world/index|Hello World]] — a guided trip through the whole loop
 - [[../projects/profile-site/index|Personal Profile Website]] — a real build, ready to test
+- [[swe-career-path-framework-uae-junior-to-staff]]

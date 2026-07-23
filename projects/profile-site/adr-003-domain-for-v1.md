@@ -3,7 +3,7 @@ title: "Own domain, or a free subdomain for v1?"
 type: decision
 created: 2026-07-19
 tags: [decision]
-status: proposed
+status: accepted
 ---
 
 # Own domain, or a free subdomain for v1?
