@@ -1,107 +1,83 @@
-# Your Command Center
+# Profession Ladder
 
-A personal command center: a **markdown vault** (your knowledge + your projects)
-plus a **SvelteKit face** that gives it a read surface, a Human-Gate inbox, and a
-**governed kanban board** for every plan. You drive it from the terminal and the
-face; the AI drafts and does the work; you hold the judgment.
+A career-progression **tracker** for the **Software Engineer** cluster — our course
+final project. It maps the path a software engineer climbs over ten years, from a
+bachelor's degree to Staff Engineer, and tracks every requirement along the way as
+an interactive, self-updating checklist.
 
-The repo root **is** the vault — the installer places it at `~/vault`, and the
-face lives in `frontend/`.
+> **Software Engineer** (today) → **Senior Software Engineer** (Year 5) → **Staff / Lead Software Engineer** (Year 10)
 
-## Install
+Built on a markdown **vault** (the research and the plan) with a **SvelteKit** face
+that renders it as a live career profile at `/ladder`.
 
-```bash
-git clone https://github.com/jneaimi/command-center-starter-final.git
-bash command-center-starter-final/install.sh
-```
+## What it does
 
-The installer places the vault at `~/vault` (archiving any previous one to
-`~/archive` — nothing is deleted), stages the `~/.claude` side (rules, settings,
-the guard hook, the `my-vault` skill), puts the `vault` command on your PATH, and
-**verifies everything**. Then, in two places:
+- **Career profile & tracker** (`/ladder`) — a dashboard of your promotion path: an
+  overall progress ring, per-promotion progress, and the full requirement checklist
+  for each rung. Filter by status or category; tick a requirement and it saves.
+- **Live checklist** — each requirement is a work item in the vault. Ticking it done
+  writes to the vault; the progress rings and bars update on their own. Finish a task
+  from the board or the terminal and the tracker reflects it too (it auto-syncs).
+- **Grounded content** — the requirements (certifications, courses, projects,
+  experience bands) are drawn from public engineering career ladders (Dropbox,
+  GitLab, CircleCI), the FAANG level maps, and Will Larson's *Staff Engineer*.
 
-```bash
-# drive it from the terminal
-cd ~/vault && claude
+## The two promotions
 
-# open its face (the app)
-cd ~/vault/frontend && npm install && npm run dev
-```
+| Year | Rung | The jump | What it takes (in brief) |
+|---|---|---|---|
+| 0 | **Software Engineer** | you are here — a bachelor's, ~0 yrs | finish well-defined tasks |
+| +5 | **Senior Software Engineer** | own a feature/service end-to-end | AWS SA-Associate · system design + DDIA · own a service · lead a project · mentor |
+| +10 | **Staff / Lead Software Engineer** | set direction across teams | AWS SA-Professional · Staff-track reading · build a platform · lead a migration · own a strategy |
 
-Windows: run the same steps inside WSL (Ubuntu).
+The full detail for each rung lives in `knowledge/`, and the concrete, trackable
+checklist lives as work items under `projects/profession-ladder/`.
 
-## Update (without reinstalling)
-
-`install.sh` copies files *out* of this repo into `~/vault` **and** into
-`~/.claude`. A plain `git pull` refreshes the vault and the `vault` command, but
-not the `~/.claude` side (the guard + skill). To pull everything up to date
-without reinstalling — and without touching your notes, projects, or inbox:
+## Run it
 
 ```bash
-cd ~/vault && git pull && bash update.sh
+cd frontend
+npm install
+npm run dev          # open the printed URL, then go to /ladder
 ```
 
-`update.sh` re-stages the `~/.claude` files and re-checks the tools; it archives
-nothing and leaves your vault content exactly as it is. Restart your Claude Code
-session afterward so the refreshed guard + skill load.
-
-## What's inside
-
-```
-CLAUDE.md                     the vault rules the doctor enforces
-bin/vault                     the doorway — one command, both of you use it:
-                                draft   capture · adr · plan · scope · task
-                                move    claim (→active) · submit (→review)
-                                gate    accept · reject · commit  (human only)
-                                read    projects · recent · search · tree
-doctor.sh                     the read-only check-up for the whole vault
-knowledge/                    interlinked notes + index (the method, the tools)
-projects/hello-world/         a guided tour — each ADR/plan/scope/task explains
-                              the step; build the tiniest thing and drive the
-                              whole loop once
-projects/profile-site/        a realistic build, ready to test on the board:
-                              decisions + a draft plan + scopes + backlog tasks
-inbox/                        quick captures waiting to be filed
-frontend/                     the SvelteKit face (see frontend/README.md)
-setup/dot-claude/             the ~/.claude side the installer stages:
-                                CLAUDE.md        global rules
-                                settings.json    the guard on Bash|Write|Edit
-                                hooks/           vault-write-guard.sh — its 4 laws
-                                skills/my-vault  the skill, wired to the doorway
-```
-
-## How the work moves — and who moves it
-
-The lifecycle of a task: **backlog → planning → active → review → completed.**
-Each step has an owner, and the rules are enforced three ways — the engine
-refuses illegal moves, the face reflects the gates, and the guard + `vault`
-command stop the AI from going around them.
-
-| Move | Who | Where |
-|---|---|---|
-| Approve a decision (ADR → accepted) | human | inbox / the ADR's page |
-| Commit a plan (→ accepted) — only once its decision is accepted | human | the board |
-| Commit a scope → its tasks move to planning | human | the board |
-| Claim a task (planning → active) | **AI** | `vault claim <project> <task>` |
-| Submit a task (active → review) | **AI** | `vault submit <project> <task>` |
-| Approve (review → completed) / send back (→ planning) | human | the board |
-
-The AI can **never** complete work or approve anything — `vault done`,
-`vault accept`, `vault reject`, and `vault commit` are blocked at the door. It
-drafts and does; you sign.
-
-## Keep it always on
-
-To keep the face running in the background and surviving a reboot, run the built
-server under **PM2** — see the bonus lesson. In short:
+To run the built server:
 
 ```bash
-cd ~/vault/frontend && npm run build
-VAULT_DIR=$HOME/vault PORT=5180 pm2 start build/index.js --name command-center
-pm2 save && pm2 startup   # run the line it prints
+cd frontend && npm run build
+VAULT_DIR=<path-to-this-repo> PORT=5180 node build
 ```
 
-## The rule that never moves
+## How the tracker works
 
-Non-sensitive content only. Reads run free; writes wait for your review. The AI
-drafts, does the work, and stops at every gate. You hold the judgment.
+The checklist is not hardcoded — it reads the **live status** of the work items in
+the vault:
+
+- Each promotion requirement is a work item (`projects/profession-ladder/wi-*.md`)
+  with a `status` (`backlog → done`).
+- Tick a requirement on `/ladder` and the app writes `done` to that file through the
+  vault engine; untick returns it to `backlog`.
+- The page re-reads the vault every few seconds, so a requirement completed anywhere
+  shows as done here automatically.
+
+Every design choice is recorded as an **ADR** (`projects/profession-ladder/adr-*.md`),
+and `doctor.sh` validates the whole vault (frontmatter, note types, kebab-case names,
+no dangling links).
+
+## Structure
+
+```
+knowledge/                     the career-ladder notes — the map and each rung
+  software-engineer-career-ladder.md
+  senior-software-engineer.md
+  staff-software-engineer.md
+  the-scope-ladder-task-to-org.md
+  promotion-is-operating-at-the-next-level.md
+projects/profession-ladder/    the trail: ADRs · plan · scopes · work items
+frontend/                      the SvelteKit tracker (the /ladder view)
+doctor.sh                      the vault validator
+```
+
+## Team
+
+Built by our five-member team as the course final project.
